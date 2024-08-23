@@ -33,6 +33,7 @@
         <lombok.version>1.18.34</lombok.version>
         <mapstruct.version>1.6.0.RC1</mapstruct.version>
         <postgresql.version>42.7.3</postgresql.version>
+        <springdoc.version>1.8.0</springdoc.version>
     </properties>
 
     <dependencies>
@@ -76,6 +77,13 @@
             <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>
             <version>${postgresql.version}</version>
+        </dependency>
+
+        <!-- Springdoc OpenAPI -->
+        <dependency>
+            <groupId>org.springdoc</groupId>
+            <artifactId>springdoc-openapi-ui</artifactId>
+            <version>${springdoc.version}</version>
         </dependency>
 
         <!-- Spring Boot Test -->
