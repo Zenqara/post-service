@@ -34,6 +34,7 @@
         <mapstruct.version>1.6.0.RC1</mapstruct.version>
         <postgresql.version>42.7.3</postgresql.version>
         <springdoc.version>1.8.0</springdoc.version>
+        <spring.validation.version>3.3.3</spring.validation.version>
     </properties>
 
     <dependencies>
@@ -84,6 +85,13 @@
             <groupId>org.springdoc</groupId>
             <artifactId>springdoc-openapi-ui</artifactId>
             <version>${springdoc.version}</version>
+        </dependency>
+
+        <!-- Validation -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-validation</artifactId>
+            <version>${spring.validation.version}</version>
         </dependency>
 
         <!-- Spring Boot Test -->
