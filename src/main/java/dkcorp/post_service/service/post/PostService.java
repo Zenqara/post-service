@@ -1,7 +1,8 @@
 package dkcorp.post_service.service.post;
 
+import dkcorp.post_service.dto.post.PostCreateDto;
 import dkcorp.post_service.dto.post.PostDto;
-import dkcorp.post_service.dto.post.PostModifyDto;
+import dkcorp.post_service.dto.post.PostUpdateDto;
 
 import java.util.List;
 
@@ -10,9 +11,9 @@ public interface PostService {
 
     PostDto findPostById(Long postId);
 
-    PostDto createPost(PostModifyDto postModifyDto);
+    PostDto createPost(PostCreateDto postCreateDto);
 
-    PostDto updatePost(PostModifyDto postModifyDto);
+    PostDto updatePost(PostUpdateDto postUpdateDto);
 
     void deletePost(Long postId);
 }
