@@ -15,7 +15,7 @@ public class UserValidatorImpl implements UserValidator {
     @Override
     public void validateUserExistence(Long userId) {
         try {
-            UserDto userDto = userService.getUserById(userId);
+            userService.getUserById(userId);
         } catch (FeignException.NotFound ex) {
             throw new NotFoundException(String.format("User with id '%d' not found", userId));
         } catch (FeignException ex) {
