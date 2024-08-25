@@ -11,7 +11,9 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class PostModifyDto {
+public class PostCreateDto {
+    @NotBlank(message = "Author id is mandatory")
+    private Long authorId;
     @NotBlank(message = "Title must not be blank. Example: My First Post")
     @Size(min = 1, max = 32, message = "Title must be between 1 and 32 characters")
     private String title;
