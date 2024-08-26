@@ -3,6 +3,7 @@ package dkcorp.post_service.controller;
 import dkcorp.post_service.dto.post.PostCreateDto;
 import dkcorp.post_service.dto.post.PostDto;
 import dkcorp.post_service.dto.post.PostUpdateDto;
+import dkcorp.post_service.exception.NotFoundException;
 import dkcorp.post_service.service.post.PostService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -14,9 +15,11 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -28,7 +31,6 @@ public class PostControllerTest {
 
     @Mock
     private PostService postService;
-
 
     @Test
     void findAllPosts_shouldReturnListOfPostDtos() {
@@ -94,6 +96,17 @@ public class PostControllerTest {
         doNothing().when(postService).deletePost(postId);
 
         assertDoesNotThrow(() -> postController.deletePost(postId));
+
+        verify(postService, times(1)).deletePost(postId);
+    }
+
+    @Test
+    void deletePost_shouldThrowExceptionWhenPostNotFound() {
+        Long postId = 1L;
+
+        doThrow(new NotFoundException("Post not found")).when(postService).deletePost(postId);
+
+        assertThrows(NotFoundException.class, () -> postController.deletePost(postId));
 
         verify(postService, times(1)).deletePost(postId);
     }
