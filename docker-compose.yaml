@@ -1,0 +1,24 @@
+version: '3.8'
+
+services:
+  post-service:
+    image: post-service:0.0.1
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8081:8081"
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://master_postgres:5432/zenqara_db
+      - SPRING_DATASOURCE_USERNAME=user
+      - SPRING_DATASOURCE_PASSWORD=password
+      - SPRING_JPA_HIBERNATE_DDL_AUTO=update
+      - SPRING_JPA_SHOW_SQL=true
+      - SPRING_JPA_PROPERTIES_HIBERNATE_DIALECT=org.hibernate.dialect.PostgreSQLDialect
+      - USER_SERVICE_HOST=user-service
+    networks:
+      - backend_network
+
+networks:
+  backend_network:
+    external: true
