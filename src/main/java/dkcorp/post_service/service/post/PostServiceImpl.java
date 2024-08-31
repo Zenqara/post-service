@@ -19,6 +19,7 @@ public class PostServiceImpl implements PostService {
     private final PostValidator postValidator;
     private final PostMapper postMapper;
     private final PostRepository postRepository;
+    private final PostEventService postEventService;
 
     @Override
     public List<PostDto> findAll() {
@@ -35,14 +36,18 @@ public class PostServiceImpl implements PostService {
     public PostDto createPost(PostCreateDto postCreateDto) {
         postValidator.validateAuthor(postCreateDto.getAuthorId());
         Post post = postMapper.createDtoToEntity(postCreateDto);
-        return postMapper.entityToDto(postRepository.save(post));
+        Post savedPost = postRepository.save(post);
+        postEventService.publishPostCreatedEvent(savedPost);
+        return postMapper.entityToDto(savedPost);
     }
 
     @Override
     public PostDto updatePost(Long postId, PostUpdateDto postUpdateDto) {
         Post post = findById(postId);
         postMapper.updatePostFromUpdateDto(postUpdateDto, post);
-        return postMapper.entityToDto(postRepository.save(post));
+        Post updatedPost = postRepository.save(post);
+        postEventService.publishPostUpdatedEvent(updatedPost);
+        return postMapper.entityToDto(updatedPost);
     }
 
     @Override
