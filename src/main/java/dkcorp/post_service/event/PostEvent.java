@@ -10,6 +10,8 @@ import java.time.LocalDateTime;
 public class PostEvent {
     private Long postId;
     private Long actorId;
+    private String title;
+    private String content;
     private EventType eventType;
-    private LocalDateTime performedAt;
+    private LocalDateTime timestamp;
 }
