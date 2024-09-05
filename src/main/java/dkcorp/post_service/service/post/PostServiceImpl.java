@@ -10,7 +10,6 @@ import dkcorp.post_service.repository.PostRepository;
 import dkcorp.post_service.validator.post.PostValidator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -22,15 +21,10 @@ public class PostServiceImpl implements PostService {
     private final PostValidator postValidator;
     private final PostMapper postMapper;
     private final PostRepository postRepository;
-    private final KafkaTemplate<String, String> kafkaTemplate;
+    private final PostEventService postEventService;
 
     @Override
     public List<PostDto> findAll() {
-        kafkaTemplate.send("post-events", "The find all method was called");
-
-        log.info("Sending message to kafka topic");
-        log.info("--------------------------------");
-
         return postMapper.toDtoList(postRepository.findAll());
     }
 
@@ -45,6 +39,7 @@ public class PostServiceImpl implements PostService {
         postValidator.validateAuthor(postCreateDto.getAuthorId());
         Post post = postMapper.createDtoToEntity(postCreateDto);
         Post savedPost = postRepository.save(post);
+        postEventService.publishPostCreatedEvent(savedPost);
         return postMapper.entityToDto(savedPost);
     }
 
@@ -53,6 +48,7 @@ public class PostServiceImpl implements PostService {
         Post post = findById(postId);
         postMapper.updatePostFromUpdateDto(postUpdateDto, post);
         Post updatedPost = postRepository.save(post);
+        postEventService.publishPostUpdatedEvent(updatedPost);
         return postMapper.entityToDto(updatedPost);
     }
 
