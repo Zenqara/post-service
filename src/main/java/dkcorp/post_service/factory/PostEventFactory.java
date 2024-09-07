@@ -5,8 +5,6 @@ import dkcorp.post_service.event.EventType;
 import dkcorp.post_service.event.PostEvent;
 import org.springframework.stereotype.Component;
 
-import java.time.LocalDateTime;
-
 @Component
 public class PostEventFactory {
     public PostEvent createPostCreatedEvent(Post post) {
@@ -16,7 +14,7 @@ public class PostEventFactory {
                 .title(post.getTitle())
                 .content(post.getContent())
                 .eventType(EventType.CREATED)
-                .timestamp(LocalDateTime.now())
+                .timestamp(post.getCreatedAt())
                 .build();
     }
 
@@ -27,7 +25,7 @@ public class PostEventFactory {
                 .title(post.getTitle())
                 .content(post.getContent())
                 .eventType(EventType.UPDATED)
-                .timestamp(LocalDateTime.now())
+                .timestamp(post.getUpdatedAt())
                 .build();
     }
 }
