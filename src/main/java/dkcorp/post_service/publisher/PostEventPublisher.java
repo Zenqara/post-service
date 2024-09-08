@@ -2,6 +2,7 @@ package dkcorp.post_service.publisher;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import dkcorp.post_service.configuration.kafka.KafkaTopicProperties;
 import dkcorp.post_service.event.PostEvent;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -15,13 +16,13 @@ import org.springframework.stereotype.Component;
 public class PostEventPublisher implements MessagePublisher<PostEvent> {
     private final KafkaTemplate<String, String> kafkaTemplate;
     private final ObjectMapper objectMapper;
+    private final KafkaTopicProperties properties;
 
     @Override
     public void publish(PostEvent event) {
         try {
             String message = objectMapper.writeValueAsString(event);
-            kafkaTemplate.send("post-events", message);
-
+            kafkaTemplate.send(properties.getName(), message);
             log.info("Published post event to Kafka - {}: {}", "post-events", message);
         } catch (JsonProcessingException e) {
             throw new SerializationException("Error serializing post event", e);
