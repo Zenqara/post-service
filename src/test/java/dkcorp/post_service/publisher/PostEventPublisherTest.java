@@ -2,6 +2,7 @@ package dkcorp.post_service.publisher;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import dkcorp.post_service.configuration.kafka.KafkaTopicProperties;
 import dkcorp.post_service.event.EventType;
 import dkcorp.post_service.event.PostEvent;
 import org.apache.kafka.common.errors.SerializationException;
@@ -28,18 +29,16 @@ import static org.mockito.Mockito.when;
 public class PostEventPublisherTest {
     @Mock
     private KafkaTemplate<String, String> kafkaTemplate;
-
     @Mock
     private ObjectMapper objectMapper;
-
+    @Mock
+    private KafkaTopicProperties properties;
     @InjectMocks
     private PostEventPublisher postEventPublisher;
-
     private PostEvent postEvent;
 
     @BeforeEach
     void setUp() {
-
         postEvent = PostEvent.builder()
                 .postId(1L)
                 .actorId(33L)
@@ -54,6 +53,7 @@ public class PostEventPublisherTest {
     void publish_shouldSendPostEventToKafka() throws JsonProcessingException {
         String serializedEvent = "{\"postId\":1,\"actorId\":33,\"title\":\"My FIRST post\",\"content\":\"This is content of my FIRST post\",\"eventType\":\"CREATED\",\"timestamp\":\"2023-09-07T10:00:00\"}";
         when(objectMapper.writeValueAsString(postEvent)).thenReturn(serializedEvent);
+        when(properties.getName()).thenReturn("post-events");
 
         postEventPublisher.publish(postEvent);
 
