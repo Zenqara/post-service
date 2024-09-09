@@ -39,24 +39,27 @@ public class PostServiceTest {
     @Mock
     private PostMapper postMapper;
 
+    @Mock
+    private PostEventService postEventService;
+
     @Test
     void findAll_shouldReturnListOfPostDtos() {
-        List<Post> users = List.of(
+        List<Post> posts = List.of(
                 Post.builder().id(1L).authorId(33L).title("My FIRST post").content("This is content of my FIRST post").build(),
                 Post.builder().id(2L).authorId(33L).title("My SECOND post").content("This is content of my SECOND post").build()
         );
 
-        List<PostDto> userDtos = List.of(
+        List<PostDto> postDtos = List.of(
                 PostDto.builder().id(1L).authorId(33L).title("My FIRST post").content("This is content of my FIRST post").build(),
                 PostDto.builder().id(2L).authorId(33L).title("My SECOND post").content("This is content of my SECOND post").build()
         );
 
-        when(postRepository.findAll()).thenReturn(users);
-        when(postMapper.toDtoList(users)).thenReturn(userDtos);
+        when(postRepository.findAll()).thenReturn(posts);
+        when(postMapper.toDtoList(posts)).thenReturn(postDtos);
 
         List<PostDto> result = postService.findAll();
 
-        assertEquals(userDtos, result);
+        assertEquals(postDtos, result);
     }
 
     @Test
@@ -115,6 +118,7 @@ public class PostServiceTest {
 
         assertEquals(createdPostDto, result);
         verify(postValidator, times(1)).validateAuthor(postCreateDto.getAuthorId());
+        verify(postEventService, times(1)).publishPostCreatedEvent(newPost);
     }
 
     @Test
@@ -140,15 +144,14 @@ public class PostServiceTest {
                 .build();
 
         when(postRepository.findById(postId)).thenReturn(Optional.of(existingPost));
-
-        postMapper.updatePostFromUpdateDto(postUpdateDto, existingPost);
-
+        doNothing().when(postMapper).updatePostFromUpdateDto(postUpdateDto, existingPost);
         when(postRepository.save(existingPost)).thenReturn(existingPost);
         when(postMapper.entityToDto(existingPost)).thenReturn(updatedPostDto);
 
         PostDto result = postService.updatePost(postId, postUpdateDto);
 
         assertEquals(updatedPostDto, result);
+        verify(postEventService, times(1)).publishPostUpdatedEvent(existingPost);
     }
 
     @Test

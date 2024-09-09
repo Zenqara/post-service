@@ -9,16 +9,19 @@ import dkcorp.post_service.mapper.PostMapper;
 import dkcorp.post_service.repository.PostRepository;
 import dkcorp.post_service.validator.post.PostValidator;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class PostServiceImpl implements PostService {
     private final PostValidator postValidator;
     private final PostMapper postMapper;
     private final PostRepository postRepository;
+    private final PostEventService postEventService;
 
     @Override
     public List<PostDto> findAll() {
@@ -35,14 +38,18 @@ public class PostServiceImpl implements PostService {
     public PostDto createPost(PostCreateDto postCreateDto) {
         postValidator.validateAuthor(postCreateDto.getAuthorId());
         Post post = postMapper.createDtoToEntity(postCreateDto);
-        return postMapper.entityToDto(postRepository.save(post));
+        Post savedPost = postRepository.save(post);
+        postEventService.publishPostCreatedEvent(savedPost);
+        return postMapper.entityToDto(savedPost);
     }
 
     @Override
     public PostDto updatePost(Long postId, PostUpdateDto postUpdateDto) {
         Post post = findById(postId);
         postMapper.updatePostFromUpdateDto(postUpdateDto, post);
-        return postMapper.entityToDto(postRepository.save(post));
+        Post updatedPost = postRepository.save(post);
+        postEventService.publishPostUpdatedEvent(updatedPost);
+        return postMapper.entityToDto(updatedPost);
     }
 
     @Override

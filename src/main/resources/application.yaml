@@ -17,6 +17,18 @@ spring:
         dialect: org.hibernate.dialect.PostgreSQLDialect
         format_sql: true
 
+  kafka:
+    producer:
+      bootstrap-servers: "localhost:9092,localhost:9093,localhost:9094"
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.apache.kafka.common.serialization.StringSerializer
+      retries: 3
+      acks: all
+      addTypeHeaders: false
+
+    topic:
+      name: post-events
+
   servlet:
     multipart:
       max-request-size: 10MB
